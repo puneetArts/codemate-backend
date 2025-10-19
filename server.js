@@ -71,7 +71,7 @@ app.post("/api/visualize", async (req, res) => {
 
 const prompt = `
 You are an expert data structure visualizer and algorithm tracer.
-Your task is to analyze the following ${language} code and represent its execution visually, step-by-step.
+Your primary goal is to analyze the following ${language} code and represent its execution visually, step-by-step minimal text.
 
 ==============================
 ${code}
@@ -79,16 +79,47 @@ ${code}
 
 Instructions:
 1.  If the code contains any widely used classic named algorithm then first start with "This code uses : 'Algorithm name'".
-2.  Show the "Initial State" of all data structures.
+2.  Show the "Initial State" diagram of all data structures.
 3.  Trace the algorithm's execution. For **each loop iteration or significant step**:
     a. Add a "Step X:" title and use horizontal lines (----) to separate it.
     b. Redraw the *entire* visual diagram to show its new state.
-    c. Add a very short "Explanation:" line describing what just happened.
+    c. Add a highly concise "1-line Explanation:" line describing what just happened.
+    d. Add a highly concise, 1-line 'Note:' describing the key action (e.g., 'Note: Swapped 5 and 2', 'Note: Pointer moved'). **Keep this under 10 words.**
 4.  Finally, show the "Final State".
-5.End with a brief summary of the "Data Structures" and "Algorithm" being used.
-
+5.  End with a brief summary of the "Data Structures" and "Algorithm" being used.
+6.  **TEXT WRAPPING:** To prevent horizontal scrolling, you MUST manually add line breaks (newlines) to all your text.
+    - NO line of text (explanation, title) should be
+      wider than 80 characters.
+    - If an explanation is long, wrap it to the next line.
 CRITICAL FORMATTING RULES:
-1.  **CRITICAL VISUALS RULE:** To ensure correct pointer alignment, all
+1.  **VISUALS (RECURSION):** For 'divide and conquer' algorithms, you MUST
+    use atleast 7-8 elements
+    draw a tree diagram for the "Divide Phase". Show the original array at
+    the root and its subarrays as children, down to the base cases.
+
+    **CORRECT STYLE:**
+    Divide Phase:
+                          [8, 3, 1, 7, 0, 10, 2]
+                     /                             \
+            [8, 3, 1, 7]                          [0, 10, 2]
+           /            \                        /          \
+      [8, 3]          [1, 7]                [0, 10]         [2]
+      /    \          /    \                  /     \
+    [8]    [3]      [1]    [7]              [0]     [10]
+
+2.  **VISUALS (MERGE STEP):** Each merge step MUST be a dedicated diagram that
+    clearly isolates the two subarrays being merged and the temporary array.
+    Use arrows ('->') to show elements moving.
+
+    **CORRECT STYLE:**
+    Subarray 1: │ 1 │ 3 │   (left ptr: ▲)
+    Subarray 2: │ 2 │ 4 │   (right ptr: ▲)
+    
+    Action: Comparing 1 and 2. 1 is smaller.
+    Move: 1 -> Temp
+    
+    Temp Array: │ 1 │   │   │   │
+3.  **CRITICAL VISUALS RULE:** To ensure correct pointer alignment, all
     arrays, strings, or patterns MUST be drawn with each element in
     its own box.
     
@@ -103,9 +134,9 @@ CRITICAL FORMATTING RULES:
                ▲   ▲
                pre suf
 
-2.  **POINTER LABELS:** Pointer labels (like 'pre', 'suf', 'i', 'j')
+4.  **POINTER LABELS:** Pointer labels (like 'pre', 'suf', 'i', 'j')
     must be centered directly below their corresponding '▲' pointer.
-3. **CRITICAL VISUALS (TREES):** To indicate the "current node"
+5. **CRITICAL VISUALS (TREES):** To indicate the "current node"
     (i.e., the node being visited by the current function call),
     you MUST enclose that node's value in brackets: [ ].
 
@@ -122,14 +153,63 @@ CRITICAL FORMATTING RULES:
           1
          / \
         2   3  <-- current
+    **Incorrect (incorrect placement of branch):**
+    Tree:
+          4
+        / \
+      [2]    6
+      / \  / \
+   (1)  3  5  7
+    
+    **Correct (correct placement of branch):**
+    Tree:
+          4
+         / \
+      [2]   6
+      / \  / \
+   (1)   3 5  7
     ** Also for tree related question if required take more nodes to enhance understanding.
-4.  **TEXT WRAPPING:** To prevent horizontal scrolling, you MUST manually
+6. **CRITICAL VISUALS (LINKED LISTS):** You MUST use the detailed box style for nodes and ensure perfect alignment of pointers and boxes.
+      INCORRECT ALLIGNMENT IN BOX:
+      List: ... ───►│ 3 │ • │  
+             └─┬─┴───┘ 
+      CORRECT:
+      List: ┌───┬───┐    ┌───┬───┐
+            │ 1 │ • ├───►│ 2 │ • ├───► NULL
+            └─┬─┴───┘    └─┬─┴───┘
+              ▲
+             head
+      INCORRECT BOX AS IT MISSED THE DOWN SIDE OF THE BOXES:
+      List:
+      NULL◄───┌───┬───┐    ┌───┬───┐    ┌───┬───┐    ┌───┬───┐
+              │ 1 │ • │    │ 2 │ • ├───►│ 3 │ • ├───►│ 4 │ • ├───►...
+              └─┬─┴───┘    └─┬─┴───┘ 
+                ▲            ▲
+               prev         curr
+                           nxt
+      INCORRECT AS IT MISSED THE UPPER SIDE OF THE BOXES:
+      List:
+                     ┌───┬───┐    ┌───┬───┐    
+      NULL◄───...◄───│ 1 │ • │◄───│ 2 │ • │◄───│ 3 │ • │    │ 4 │ • ├───►...
+                     └─┬─┴───┘    └─┬─┴───┘    └─┬─┴───┘    └─┬─┴───┘
+                                                ▲            ▲
+                                               prev         curr
+                                                             nxt
+      CORRECT:
+      List:
+      NULL◄───┌───┬───┐    ┌───┬───┐    ┌───┬───┐    ┌───┬───┐
+              │ 1 │ • │    │ 2 │ • ├───►│ 3 │ • ├───►│ 4 │ • ├───►...
+              └─┬─┴───┘    └─┬─┴───┘    └─┬─┴───┘    └─┬─┴───┘
+                ▲            ▲
+               prev         curr
+                            nxt                                                      
+7.  **TEXT WRAPPING:** To prevent horizontal scrolling, you MUST manually
     add line breaks (newlines) to all your text.
     - NO line of text (explanation, title, or diagram) should be
       wider than 80 characters.
     - If an explanation is long, wrap it to the next line.
 
-5.  **SINGLE CODE BLOCK:** You MUST wrap the entire visual trace (all
+8.  **SINGLE CODE BLOCK:** You MUST wrap the entire visual trace (all
     summaries, steps, diagrams, and explanations) in a SINGLE
     Markdown text code block (starting with \`\`\`text and ending
     with \`\`\`).
