@@ -153,7 +153,7 @@ CRITICAL FORMATTING RULES:
           1
          / \
         2   3  <-- current
-    **Incorrect (incorrect placement of branch):**
+    **Incorrect (incorrect placement of branch as it is not aligned with the corresponding node):**
     Tree:
           4
         / \
@@ -161,7 +161,7 @@ CRITICAL FORMATTING RULES:
       / \  / \
    (1)  3  5  7
     
-    **Correct (correct placement of branch):**
+    **Correct (branch should perfectly align with the corresponding node):**
     Tree:
           4
          / \
