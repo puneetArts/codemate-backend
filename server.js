@@ -9,7 +9,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:5173', // local dev
-    'https://codemate-kappa.vercel.app/' // deployed frontend    process.env.FRONTEND_URL // production frontend
+    'https://codemate-kappa.vercel.app' // deployed frontend    process.env.FRONTEND_URL // production frontend
 
   ],
   credentials: true
