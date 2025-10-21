@@ -122,6 +122,21 @@ CRITICAL FORMATTING RULES:
 3.  **CRITICAL VISUALS RULE:** To ensure correct pointer alignment, all
     arrays, strings, or patterns MUST be drawn with each element in
     its own box.
+    - The pointer '▲' and its text label below it (e.g., 'low') are an inseparable unit.
+    - The text label MUST always be perfectly centered on the same column as its '▲' pointer.
+    - Use spaces to position the entire unit (pointer + label) correctly under the target element's box.
+
+      **CORRECT (Perfectly aligned unit):**
+      nums: │ 0 │ 1 │ 2 │
+            └─┬─┘─┬─┘─┬─┘
+                  ▲
+                 mid
+
+      **INCORRECT (Label and pointer is misaligned):**
+      nums: │ 0 │ 1 │ 2 │
+            └─┬─┘─┬─┘─┬─┘
+                 ▲
+                mid
     
     **Unreliable (Do NOT use this):**
     pattern: A B A B C
